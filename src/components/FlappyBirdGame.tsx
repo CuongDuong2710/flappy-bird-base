@@ -37,9 +37,9 @@ export default function FlappyBirdGame() {
   const BIRD_SIZE = 30;
   const PIPE_WIDTH = 60;
   const PIPE_GAP = 180;
-  const GRAVITY = 0.5;
-  const JUMP_STRENGTH = -10;
-  const PIPE_SPEED = 3;
+  const GRAVITY = 0.4;
+  const JUMP_STRENGTH = -8;
+  const PIPE_SPEED = 2;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -82,15 +82,15 @@ export default function FlappyBirdGame() {
       // Bird eye
       ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.arc(85, gameState.bird.y - 5, 4, 0, Math.PI * 2);
+      ctx.arc(90, gameState.bird.y - 5, 4, 0, Math.PI * 2);
       ctx.fill();
 
-      // Bird beak
+      // Bird beak (rostrum) - more precise triangle
       ctx.fillStyle = '#FF6347';
       ctx.beginPath();
-      ctx.moveTo(95, gameState.bird.y);
-      ctx.lineTo(110, gameState.bird.y - 5);
-      ctx.lineTo(110, gameState.bird.y + 5);
+      ctx.moveTo(80 + BIRD_SIZE / 2, gameState.bird.y);
+      ctx.lineTo(80 + BIRD_SIZE / 2 + 12, gameState.bird.y - 4);
+      ctx.lineTo(80 + BIRD_SIZE / 2 + 12, gameState.bird.y + 4);
       ctx.closePath();
       ctx.fill();
 
