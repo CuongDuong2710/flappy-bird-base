@@ -88,9 +88,9 @@ export default function FlappyBirdGame() {
       // Bird beak (rostrum) - more precise triangle
       ctx.fillStyle = '#FF6347';
       ctx.beginPath();
-      ctx.moveTo(80 + BIRD_SIZE / 2, gameState.bird.y);
-      ctx.lineTo(80 + BIRD_SIZE / 2 + 12, gameState.bird.y - 4);
-      ctx.lineTo(80 + BIRD_SIZE / 2 + 12, gameState.bird.y + 4);
+      ctx.moveTo(80 + BIRD_SIZE / 2, gameState.bird.y - 4);
+      ctx.lineTo(80 + BIRD_SIZE / 2 + 12, gameState.bird.y);
+      ctx.lineTo(80 + BIRD_SIZE / 2, gameState.bird.y + 4);
       ctx.closePath();
       ctx.fill();
 
@@ -240,7 +240,7 @@ export default function FlappyBirdGame() {
   useEffect(() => {
     if (gameState.gameOver && gameState.score > highScore) {
       setHighScore(gameState.score);
-      
+
       // Show mint modal if score qualifies (10+)
       if (gameState.score >= 10) {
         setShowMintModal(true);
@@ -292,7 +292,7 @@ export default function FlappyBirdGame() {
     try {
       // Generate unique session ID
       const sessionId = `${Date.now()}_${Math.random()}`;
-      
+
       const response = await fetch('/api/mint-nft', {
         method: 'POST',
         headers: {
@@ -307,7 +307,7 @@ export default function FlappyBirdGame() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         alert(`🎉 NFT Minted Successfully!\nTier: ${data.tier}\nToken ID: ${data.tokenId}`);
         setShowMintModal(false);
@@ -342,7 +342,7 @@ export default function FlappyBirdGame() {
           onClick={jump}
           className="border-4 border-sky-600 rounded-lg cursor-pointer"
         />
-        
+
         <div className="mt-6 text-center">
           <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
             <div className="bg-sky-100 rounded-lg p-4">
@@ -404,7 +404,7 @@ export default function FlappyBirdGame() {
             <p className="text-center text-gray-700 mb-6">
               You scored <span className="font-bold text-2xl text-sky-600">{gameState.score}</span> points!
             </p>
-            
+
             <div className="bg-gradient-to-br from-sky-100 to-blue-100 rounded-xl p-6 mb-6">
               <div className="text-center">
                 <div className="text-6xl mb-3">{tier.emoji}</div>
@@ -421,7 +421,7 @@ export default function FlappyBirdGame() {
               >
                 {isMinting ? '⏳ Minting...' : '🎨 Mint NFT (0.0001 ETH)'}
               </button>
-              
+
               <button
                 onClick={() => setShowMintModal(false)}
                 className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 px-6 rounded-xl transition-all"
