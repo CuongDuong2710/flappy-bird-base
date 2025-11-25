@@ -290,36 +290,76 @@ export default function FlappyBirdGame() {
   const handleMintNFT = async () => {
     setIsMinting(true);
     try {
-      // Generate unique session ID
-      const sessionId = `${Date.now()}_${Math.random()}`;
-
-      const response = await fetch('/api/mint-nft', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionId,
-          score: gameState.score,
-          gameTime: Math.floor(Date.now() / 1000),
-          jumps: 0, // Can track this if needed
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.tokenId) {
-        alert(`🎉 NFT Minted Successfully!\nTier: ${data.tier}\nToken ID: ${data.tokenId}`);
-        setShowMintModal(false);
-      } else {
-        // Show detailed error message
-        const errorMsg = data.error || data.message || 'Minting failed';
-        const instructions = data.instructions ? '\n\n' + data.instructions.join('\n') : '';
-        alert(`❌ ${errorMsg}${instructions}`);
+      // Get Ethereum provider from Farcaster
+      const provider = await sdk.wallet.getEthereumProvider();
+      
+      if (!provider) {
+        alert('❌ Please connect your Farcaster wallet first');
+        setIsMinting(false);
+        return;
       }
-    } catch (error) {
+
+      // Request account access
+      const accounts = await provider.request({ 
+        method: 'eth_requestAccounts' 
+      }) as string[];
+      
+      if (!accounts || accounts.length === 0) {
+        alert('❌ No wallet account found');
+        setIsMinting(false);
+        return;
+      }
+
+      const userAddress = accounts[0];
+
+      // Get contract address and prepare transaction
+      const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
+      
+      if (!contractAddress) {
+        alert('❌ NFT contract not deployed yet. Please contact the developer.');
+        setIsMinting(false);
+        return;
+      }
+
+      // Generate unique session ID
+      const sessionId = `0x${Date.now().toString(16)}${Math.floor(Math.random() * 1000000).toString(16).padStart(8, '0')}`;
+      const score = gameState.score;
+      const gameTime = Math.floor(Date.now() / 1000);
+      const jumps = 0;
+
+      // Encode function call data
+      // mintFlappyBirdNFT(bytes32 sessionId, uint256 score, uint256 gameTime, uint256 jumps)
+      const functionSignature = '0x8c5e3a7d'; // keccak256('mintFlappyBirdNFT(bytes32,uint256,uint256,uint256)').slice(0, 10)
+      const encodedData = functionSignature + 
+        sessionId.slice(2).padStart(64, '0') +
+        score.toString(16).padStart(64, '0') +
+        gameTime.toString(16).padStart(64, '0') +
+        jumps.toString(16).padStart(64, '0');
+
+      // Send transaction
+      const txHash = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: userAddress,
+          to: contractAddress,
+          value: '0x5AF3107A4000', // 0.0001 ETH in hex
+          data: encodedData,
+        }],
+      }) as string;
+
+      alert(`🎉 Transaction submitted!\n\nTx Hash: ${txHash}\n\nYour NFT will be minted shortly. Check your wallet!`);
+      setShowMintModal(false);
+      
+    } catch (error: any) {
       console.error('Minting error:', error);
-      alert('Failed to mint NFT. Please try again.');
+      
+      if (error.code === 4001) {
+        alert('❌ Transaction rejected by user');
+      } else if (error.message?.includes('insufficient funds')) {
+        alert('❌ Insufficient funds. You need at least 0.0001 ETH + gas fees.');
+      } else {
+        alert(`❌ Error: ${error.message || 'Failed to mint NFT'}`);
+      }
     } finally {
       setIsMinting(false);
     }
