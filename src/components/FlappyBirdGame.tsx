@@ -308,11 +308,14 @@ export default function FlappyBirdGame() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.tokenId) {
         alert(`🎉 NFT Minted Successfully!\nTier: ${data.tier}\nToken ID: ${data.tokenId}`);
         setShowMintModal(false);
       } else {
-        alert(`Error: ${data.error}`);
+        // Show detailed error message
+        const errorMsg = data.error || data.message || 'Minting failed';
+        const instructions = data.instructions ? '\n\n' + data.instructions.join('\n') : '';
+        alert(`❌ ${errorMsg}${instructions}`);
       }
     } catch (error) {
       console.error('Minting error:', error);
