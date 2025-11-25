@@ -16,10 +16,10 @@ contract FlappyBirdNFT is ERC721, ERC721URIStorage, Ownable, ReentrancyGuard {
     uint256 private _tokenIdCounter = 1; // Start at 1
     
     // Game score thresholds for different NFT tiers
-    uint256 public constant BRONZE_THRESHOLD = 10;
-    uint256 public constant SILVER_THRESHOLD = 25;
-    uint256 public constant GOLD_THRESHOLD = 50;
-    uint256 public constant LEGENDARY_THRESHOLD = 100;
+    uint256 public constant BRONZE_THRESHOLD = 3;
+    uint256 public constant SILVER_THRESHOLD = 10;
+    uint256 public constant GOLD_THRESHOLD = 20;
+    uint256 public constant LEGENDARY_THRESHOLD = 40;
     
     // Minting limits per address
     mapping(address => uint256) public mintedCount;

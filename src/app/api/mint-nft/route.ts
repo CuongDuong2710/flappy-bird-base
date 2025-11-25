@@ -40,9 +40,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (score < 10) {
+    if (score < 3) {
       return NextResponse.json(
-        { error: 'Score must be at least 10 to mint NFT' },
+        { error: 'Score must be at least 3 to mint NFT' },
         { status: 400 }
       );
     }
@@ -50,10 +50,10 @@ export async function POST(req: NextRequest) {
     if (!NFT_CONTRACT_ADDRESS) {
       // Return mock response for testing when contract is not deployed
       const getTier = (score: number) => {
-        if (score >= 100) return 'Legendary';
-        if (score >= 50) return 'Gold';
-        if (score >= 25) return 'Silver';
-        if (score >= 10) return 'Bronze';
+        if (score >= 40) return 'Legendary';
+        if (score >= 20) return 'Gold';
+        if (score >= 10) return 'Silver';
+        if (score >= 3) return 'Bronze';
         return 'None';
       };
 

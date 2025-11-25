@@ -241,8 +241,8 @@ export default function FlappyBirdGame() {
     if (gameState.gameOver && gameState.score > highScore) {
       setHighScore(gameState.score);
 
-      // Show mint modal if score qualifies (10+)
-      if (gameState.score >= 10) {
+      // Show mint modal if score qualifies (3+)
+      if (gameState.score >= 3) {
         setShowMintModal(true);
       }
     }
@@ -323,10 +323,10 @@ export default function FlappyBirdGame() {
   };
 
   const getTierForScore = (score: number) => {
-    if (score >= 100) return { name: 'Legendary', emoji: '💎', color: 'purple' };
-    if (score >= 50) return { name: 'Gold', emoji: '🥇', color: 'yellow' };
-    if (score >= 25) return { name: 'Silver', emoji: '🥈', color: 'gray' };
-    if (score >= 10) return { name: 'Bronze', emoji: '🥉', color: 'orange' };
+    if (score >= 40) return { name: 'Legendary', emoji: '💎', color: 'purple' };
+    if (score >= 20) return { name: 'Gold', emoji: '🥇', color: 'yellow' };
+    if (score >= 10) return { name: 'Silver', emoji: '🥈', color: 'gray' };
+    if (score >= 3) return { name: 'Bronze', emoji: '🥉', color: 'orange' };
     return { name: 'None', emoji: '❌', color: 'red' };
   };
 
@@ -364,7 +364,7 @@ export default function FlappyBirdGame() {
 
           <div className="mt-4 text-sm text-gray-600">
             <p>🎮 Click canvas or press SPACE to flap</p>
-            <p className="mt-1">🏆 Reach 10 points to mint NFT!</p>
+            <p className="mt-1">🏆 Reach 3 points to mint NFT!</p>
           </div>
         </div>
       </div>
@@ -373,25 +373,25 @@ export default function FlappyBirdGame() {
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full">
         <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">NFT Tier Requirements</h3>
         <div className="grid grid-cols-4 gap-3">
-          <div className={`p-4 rounded-lg text-center ${gameState.score >= 10 ? 'bg-orange-500 text-white' : 'bg-gray-100'}`}>
+          <div className={`p-4 rounded-lg text-center ${gameState.score >= 3 ? 'bg-orange-500 text-white' : 'bg-gray-100'}`}>
             <div className="text-2xl mb-1">🥉</div>
             <div className="font-semibold text-sm">Bronze</div>
-            <div className="text-xs mt-1">10+ pts</div>
+            <div className="text-xs mt-1">3+ pts</div>
           </div>
-          <div className={`p-4 rounded-lg text-center ${gameState.score >= 25 ? 'bg-gray-400 text-white' : 'bg-gray-100'}`}>
+          <div className={`p-4 rounded-lg text-center ${gameState.score >= 10 ? 'bg-gray-400 text-white' : 'bg-gray-100'}`}>
             <div className="text-2xl mb-1">🥈</div>
             <div className="font-semibold text-sm">Silver</div>
-            <div className="text-xs mt-1">25+ pts</div>
+            <div className="text-xs mt-1">10+ pts</div>
           </div>
-          <div className={`p-4 rounded-lg text-center ${gameState.score >= 50 ? 'bg-yellow-500 text-white' : 'bg-gray-100'}`}>
+          <div className={`p-4 rounded-lg text-center ${gameState.score >= 20 ? 'bg-yellow-500 text-white' : 'bg-gray-100'}`}>
             <div className="text-2xl mb-1">🥇</div>
             <div className="font-semibold text-sm">Gold</div>
-            <div className="text-xs mt-1">50+ pts</div>
+            <div className="text-xs mt-1">20+ pts</div>
           </div>
-          <div className={`p-4 rounded-lg text-center ${gameState.score >= 100 ? 'bg-purple-600 text-white' : 'bg-gray-100'}`}>
+          <div className={`p-4 rounded-lg text-center ${gameState.score >= 40 ? 'bg-purple-600 text-white' : 'bg-gray-100'}`}>
             <div className="text-2xl mb-1">💎</div>
             <div className="font-semibold text-sm">Legendary</div>
-            <div className="text-xs mt-1">100+ pts</div>
+            <div className="text-xs mt-1">40+ pts</div>
           </div>
         </div>
       </div>
