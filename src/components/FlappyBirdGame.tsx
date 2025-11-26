@@ -310,10 +310,8 @@ export default function FlappyBirdGame() {
         return;
       }
 
-      const userAddress = accounts[0];
-
-      // Get contract address and prepare transaction
-      const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}` | undefined;
+      // Get contract address
+      const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
       
       if (!contractAddress) {
         alert('❌ NFT contract not deployed yet. Please contact the developer.');
@@ -321,8 +319,19 @@ export default function FlappyBirdGame() {
         return;
       }
 
+      // Switch to Base network if needed
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x2105' }], // Base chain ID (8453 in hex)
+        });
+      } catch (switchError: any) {
+        // Chain might not be added, ignore and continue
+        console.log('Network switch:', switchError);
+      }
+
       // Generate unique session ID
-      const sessionId = `0x${Date.now().toString(16)}${Math.floor(Math.random() * 1000000).toString(16).padStart(8, '0')}` as `0x${string}`;
+      const sessionId = `0x${Date.now().toString(16)}${Math.floor(Math.random() * 1000000).toString(16).padStart(8, '0')}`;
       const score = gameState.score;
       const gameTime = Math.floor(Date.now() / 1000);
       const jumps = 0;
@@ -330,26 +339,32 @@ export default function FlappyBirdGame() {
       // Encode function call data
       // mintFlappyBirdNFT(bytes32 sessionId, uint256 score, uint256 gameTime, uint256 jumps)
       const functionSignature = '0x8c5e3a7d'; // keccak256('mintFlappyBirdNFT(bytes32,uint256,uint256,uint256)').slice(0, 10)
-      const encodedData = `${functionSignature}${sessionId.slice(2).padStart(64, '0')}${score.toString(16).padStart(64, '0')}${gameTime.toString(16).padStart(64, '0')}${jumps.toString(16).padStart(64, '0')}` as `0x${string}`;
+      const encodedData = `${functionSignature}${sessionId.slice(2).padStart(64, '0')}${score.toString(16).padStart(64, '0')}${gameTime.toString(16).padStart(64, '0')}${jumps.toString(16).padStart(64, '0')}`;
+
+      // Prepare transaction
+      const txParams = {
+        to: contractAddress,
+        from: accounts[0],
+        value: '0x5AF3107A4000', // 0.0001 ETH in hex
+        data: encodedData,
+        gas: '0x30D40', // 200000 in hex
+      };
 
       // Send transaction
-      const txHash = await provider.request({
+      const txHash = (await provider.request({
         method: 'eth_sendTransaction',
-        params: [{
-          from: userAddress,
-          to: contractAddress,
-          value: '0x5AF3107A4000', // 0.0001 ETH in hex
-          data: encodedData,
-        }],
-      }) as string;
+        params: [txParams],
+      } as any)) as string;
 
-      alert(`🎉 Transaction submitted!\n\nTx Hash: ${txHash}\n\nYour NFT will be minted shortly. Check your wallet!`);
-      setShowMintModal(false);
+      if (txHash) {
+        alert(`🎉 Transaction submitted!\n\nTx Hash: ${txHash}\n\nYour NFT will be minted shortly. Check your wallet!`);
+        setShowMintModal(false);
+      }
       
     } catch (error: any) {
       console.error('Minting error:', error);
       
-      if (error.code === 4001) {
+      if (error.code === 4001 || error.message?.includes('User rejected')) {
         alert('❌ Transaction rejected by user');
       } else if (error.message?.includes('insufficient funds')) {
         alert('❌ Insufficient funds. You need at least 0.0001 ETH + gas fees.');
