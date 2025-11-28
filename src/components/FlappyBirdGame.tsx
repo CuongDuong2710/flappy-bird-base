@@ -383,11 +383,14 @@ export default function FlappyBirdGame() {
       const tier = getTierForScore(gameState.score);
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://flappy-bird-base.vercel.app';
       
-      // Compose cast text
-      const castText = `🎮 Just scored ${gameState.score} points in Flappy Bird on Base! ${tier.emoji}\n\n${tier.name} Tier achieved!\n\nPlay now: ${appUrl}`;
+      // Create frame URL with score data
+      const frameUrl = `${appUrl}/api/share?score=${gameState.score}&tier=${encodeURIComponent(tier.name)}&emoji=${encodeURIComponent(tier.emoji)}`;
       
-      // Use Farcaster SDK to compose cast
-      await sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}&embeds[]=${encodeURIComponent(appUrl)}`);
+      // Compose cast text
+      const castText = `🎮 Just scored ${gameState.score} points in Flappy Bird on Base! ${tier.emoji}\n\n${tier.name} Tier achieved!`;
+      
+      // Use Farcaster SDK to compose cast with frame embed
+      await sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}&embeds[]=${encodeURIComponent(frameUrl)}`);
       
       console.log('Cast composer opened successfully');
       
