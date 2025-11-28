@@ -387,11 +387,9 @@ export default function FlappyBirdGame() {
       const castText = `🎮 Just scored ${gameState.score} points in Flappy Bird on Base! ${tier.emoji}\n\n${tier.name} Tier achieved!\n\nPlay now: ${appUrl}`;
       
       // Use Farcaster SDK to compose cast
-      const result = await sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}&embeds[]=${encodeURIComponent(appUrl)}`);
+      await sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}&embeds[]=${encodeURIComponent(appUrl)}`);
       
-      if (result) {
-        console.log('Cast composer opened successfully');
-      }
+      console.log('Cast composer opened successfully');
       
     } catch (error: any) {
       console.error('Sharing error:', error);
