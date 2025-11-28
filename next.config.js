@@ -16,6 +16,12 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   
+  // ESLint configuration for builds
+  eslint: {
+    // Only run ESLint on these directories during production builds
+    dirs: ['src'],
+  },
+  
   // Ensure .well-known files are served correctly
   async headers() {
     return [
